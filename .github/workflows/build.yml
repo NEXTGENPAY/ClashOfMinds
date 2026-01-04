@@ -12,13 +12,9 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install flet google-generativeai
-      - name: Create Flet Config
-        run: |
-          echo "sdk: android" > flet.yaml
-          echo "project_name: ClashOfMinds" >> flet.yaml
       - name: Build APK
         run: |
-          flet build apk --verbose
+          flet build apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
