@@ -1,7 +1,11 @@
 sdk: android
-project_name: ClashOfMinds
+project_name: clashofminds
 main_module: main
 version: 1.0.0
-build_number: 1
-# تأكد من أن الاسم يظهر بوضوح عند التثبيت
-display_name: Clash of Minds
+build_number: 2
+
+# هذا السطر سيجعل الاسم يظهر فخماً ومنظماً
+display_name: "Clash of Minds"
+
+# هذا السطر يربط التطبيق بالصورة التي رفعتها للتو
+icon: icon.png.png
