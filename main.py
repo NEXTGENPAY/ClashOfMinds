@@ -1,75 +1,76 @@
 import os
 import flet as ft
 import google.generativeai as genai
-import asyncio
 
+# إعداد Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
-AD_URL = "https://pl28402732.effectivegatecpm.com/5074631cf56b2d724ded69adfb7d145f"
-
-async def main(page: ft.Page):
+def main(page: ft.Page):
     page.title = "Clash of Minds"
     page.theme_mode = ft.ThemeMode.DARK
     page.padding = 20
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    chat = model.start_chat(history=[])
+    AD_URL = "https://pl28402732.effectivegatecpm.com/5074631cf56b2d724ded69adfb7d145f"
 
-    messages = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+    chat = genai.GenerativeModel("gemini-pro").start_chat(history=[])
 
-    async def open_ad_later():
-        await asyncio.sleep(1)
-        page.launch_url(AD_URL)
+    messages = ft.Column(
+        expand=True,
+        scroll=ft.ScrollMode.AUTO
+    )
 
-    async def send_message(e):
+    def send_message(e):
         if not user_input.value:
             return
 
-        page.launch_url(AD_URL)
-
         messages.controls.append(
-            ft.Text(f"👤 أنت: {user_input.value}", weight="bold")
+            ft.Text(f"👤 أنت: {user_input.value}", color="blue200", weight="bold")
         )
-        page.update()
 
         try:
-            response = await asyncio.to_thread(
-                chat.send_message, user_input.value
-            )
+            response = chat.send_message(user_input.value)
             messages.controls.append(
-                ft.Text(f"🤖 الذكاء: {response.text}")
+                ft.Text(f"🤖 الذكاء: {response.text}", color="white")
             )
         except:
             messages.controls.append(
-                ft.Text("⚠️ خطأ في الاتصال", color="red")
+                ft.Text("⚠️ خطأ في الاتصال بالذكاء الاصطناعي", color="red")
             )
 
         user_input.value = ""
+        page.launch_url(AD_URL)
         page.update()
 
     user_input = ft.TextField(
         hint_text="اكتب موضوع المناظرة...",
         expand=True,
+        border_radius=15,
         on_submit=send_message
     )
 
     page.add(
         ft.AppBar(
             title=ft.Text("Clash of Minds"),
-            bgcolor=ft.colors.BLUE_700,
-            center_title=True
+            center_title=True,
+            bgcolor="blue",
+            leading=ft.Image(
+                src="icon.png.png",
+                width=30,
+                height=30
+            )
         ),
         messages,
-        ft.Row([
-            user_input,
-            ft.IconButton(
-                icon=ft.icons.SEND_ROUNDED,
-                on_click=send_message
-            )
-        ])
+        ft.Row(
+            [
+                user_input,
+                ft.IconButton(
+                    ft.Icons.SEND_ROUNDED,
+                    on_click=send_message,
+                    icon_color="blue400"
+                )
+            ]
+        )
     )
 
-    page.run_task(open_ad_later)
-
-ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+ft.app(target=main)
