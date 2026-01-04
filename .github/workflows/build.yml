@@ -14,7 +14,7 @@ jobs:
           pip install flet google-generativeai
       - name: Build APK
         run: |
-          flet build apk --no-interaction
+          flet build apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
