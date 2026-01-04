@@ -29,8 +29,8 @@ jobs:
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
-          # إضافة --no-interactive لمنع السيرفر من انتظار رد منك
-          flet build apk --no-interactive
+          # حذفنا الأمر المسبب للخطأ واستبدلناه بطريقة البناء القياسية
+          flet build apk
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
