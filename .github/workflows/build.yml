@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Deploy Web App
 on:
   push:
     branches: [ main ]
@@ -8,26 +8,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
       - name: Install dependencies
         run: |
           pip install flet google-generativeai
-
-      - name: Build APK
-        env:
-          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+      - name: Publish Web
         run: |
-          # نستخدم الأمر الصافي تماماً كما تطلبه الوثائق الرسمية
-          flet build apk
-          
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+          flet publish main.py
+      - name: Upload Web Files
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: clash-of-minds-app
-          path: build/apk/*.apk
-          
+          path: dist # هذا هو المجلد الذي ينتج عن Publish
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        
