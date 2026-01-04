@@ -29,8 +29,8 @@ jobs:
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
-          # حذفنا الأمر المسبب للخطأ واستبدلناه بطريقة البناء القياسية
-          flet build apk
+          # نستخدم أمر البناء الأساسي مع تجاهل التفاعل تماماً
+          flet build apk --no-version-check
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
