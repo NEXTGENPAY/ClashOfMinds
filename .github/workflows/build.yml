@@ -7,10 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # تحديث للإصدار 4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # تحديث للإصدار 5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -18,14 +18,22 @@ jobs:
         run: |
           pip install flet google-generativeai
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
       - name: Build APK
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
-          flet build apk
+          # إضافة --no-interactive لمنع السيرفر من انتظار رد منك
+          flet build apk --no-interactive
           
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # هذا هو السطر الذي تسبب في الخطأ، تم تحديثه إلى v4
+        uses: actions/upload-artifact@v4
         with:
           name: clash-of-minds-app
           path: build/apk/*.apk
