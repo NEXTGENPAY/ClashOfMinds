@@ -12,11 +12,11 @@ jobs:
       - name: Install Tools
         run: |
           pip install flet google-generativeai
-      - name: Prepare and Build
+      - name: Build APK
         run: |
-          # نجهز المشروع ونبني فوراً بدون أوامر نسخ إضافية
-          flet build apk --verbose
-      - name: Upload APK
+          # هذا السطر يجبر النظام على قول "نعم" لكل الأسئلة تلقائياً
+          yes | flet build apk
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: ClashOfMinds-App
