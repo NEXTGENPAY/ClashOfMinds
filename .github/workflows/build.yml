@@ -1,4 +1,5 @@
 name: Build Android APK
+
 on:
   push:
     branches: [ main ]
@@ -6,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,18 +18,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flet google-generativeai
+          pip install flet==0.24.1 flet-cli==0.24.1 google-generativeai
 
       - name: Build APK
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
-          # نستخدم الأمر الصافي تماماً كما تطلبه الوثائق الرسمية
           flet build apk
-          
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: clash-of-minds-app
           path: build/apk/*.apk
-          
