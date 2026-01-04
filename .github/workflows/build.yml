@@ -1,0 +1,23 @@
+name: Build Android APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: |
+          pip install flet google-generativeai
+      - name: Build APK
+        run: |
+          flet build apk
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ClashOfMinds-App
+          path: build/apk/*.apk
+          
