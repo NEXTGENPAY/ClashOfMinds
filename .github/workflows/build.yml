@@ -9,11 +9,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Build
+      - name: Install Dependencies
         run: |
           pip install flet google-generativeai
-          flet build apk
-      - name: Upload
+      - name: Build APK
+        run: |
+          flet build apk --no-interaction
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ClashOfMinds-App
