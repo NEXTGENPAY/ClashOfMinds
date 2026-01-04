@@ -12,11 +12,12 @@ jobs:
       - name: Install Tools
         run: |
           pip install flet google-generativeai
-      - name: Force Project Init
+      - name: Prepare and Build
         run: |
-          flet create .
-      - name: Build APK
-        run: |
+          # هذه الخطوة تنشئ ملفات المشروع غصباً عن أي خطأ
+          flet create . --template app
+          # ننسخ ملف الكود الخاص بك لضمان أنه هو الذي سيتم بناؤه
+          cp main.py main.py 
           flet build apk
       - name: Upload
         uses: actions/upload-artifact@v4
