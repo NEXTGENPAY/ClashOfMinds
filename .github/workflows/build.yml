@@ -1,58 +1,43 @@
-import os
-import flet as ft
-import google.generativeai as genai
+name: Deploy Web App
+on:
+  push:
+    branches: [ main ]
 
-# إعدادات الذكاء الاصطناعي
-GEMINI_API_KEY = os.getenv("GEMINI_KEY")
-genai.configure(api_key=GEMINI_API_KEY)
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          pip install flet google-generativeai
+          
+      - name: Build Web
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+        run: |
+          flet publish main.py
+          
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
 
-def main(page: ft.Page):
-    page.title = "Clash of Minds"
-    page.theme_mode = ft.ThemeMode.DARK
-    page.padding = 20
-    
-    # رابط الإعلانات المستقبلي
-    AD_URL = "https://www.google.com" 
-    
-    def open_ad(e=None):
-        page.launch_url(AD_URL)
-
-    # يفتح الإعلان فور دخول المستخدم
-    page.on_connect = open_ad
-
-    chat = genai.GenerativeModel('gemini-pro').start_chat(history=[])
-    
-    def send_message(e):
-        if user_input.value:
-            # يفتح إعلان عند كل ضغطة زر إرسال
-            page.launch_url(AD_URL)
-            try:
-                response = chat.send_message(user_input.value)
-                messages.controls.append(ft.Text(f"👤 أنت: {user_input.value}", color="blue200", weight="bold"))
-                messages.controls.append(ft.Text(f"🤖 الذكاء: {response.text}", color="white"))
-            except Exception as ex:
-                messages.controls.append(ft.Text(f"⚠️ خطأ: {str(ex)}", color="red"))
-            user_input.value = ""
-            page.update()
-
-    messages = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
-    user_input = ft.TextField(
-        hint_text="اكتب موضوع المناظرة...",
-        expand=True,
-        border_radius=15,
-        on_submit=send_message
-    )
-    
-    page.add(
-        ft.AppBar(
-            title=ft.Text("Clash of Minds"),
-            bgcolor="blue",
-            center_title=True,
-            leading=ft.Image(src="icon.png", width=30, height=30)
-        ),
-        messages,
-        ft.Row([user_input, ft.IconButton(ft.Icons.SEND_ROUNDED, on_click=send_message, icon_color="blue400")])
-    )
-
-# التشغيل كمتصفح ويب حصراً
-ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        
