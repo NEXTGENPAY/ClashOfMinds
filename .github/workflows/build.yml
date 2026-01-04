@@ -20,4 +20,3 @@ jobs:
         with:
           name: ClashOfMinds-App
           path: build/apk/*.apk
-          
