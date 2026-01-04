@@ -18,19 +18,12 @@ jobs:
         run: |
           pip install flet google-generativeai
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Accept Android Licenses
-        run: |
-          yes | sdkmanager --licenses || true
-
       - name: Build APK
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
-          # نستخدم أمر البناء الأساسي مع تجاهل التفاعل تماماً
-          flet build apk --no-version-check
+          # نستخدم الأمر الصافي تماماً كما تطلبه الوثائق الرسمية
+          flet build apk
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
