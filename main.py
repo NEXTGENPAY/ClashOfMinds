@@ -1,8 +1,9 @@
 import os
 import flet as ft
 import google.generativeai as genai
+import time
 
-# إعداد الذكاء الاصطناعي من السكريت
+# إعدادات الذكاء الاصطناعي
 GEMINI_API_KEY = os.getenv("GEMINI_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
@@ -11,20 +12,22 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     page.padding = 20
     
-    # رابط الأرباح الخاص بك الذي استخرجته من كودك
+    # رابط الإعلانات الخاص بك
     AD_URL = "https://pl28402732.effectivegatecpm.com/5074631cf56b2d724ded69adfb7d145f"
     
     def open_ad(e=None):
         page.launch_url(AD_URL)
 
-    # يفتح الإعلان فور دخول المستخدم للموقع
-    page.on_connect = open_ad
+    # بدلاً من الفتح الفوري، ننتظر ثانية لضمان ظهور واجهة التطبيق أولاً
+    def initial_ad_launch():
+        time.sleep(1.5)
+        page.launch_url(AD_URL)
 
     chat = genai.GenerativeModel('gemini-pro').start_chat(history=[])
     
     def send_message(e):
         if user_input.value:
-            # يفتح إعلان جديد في صفحة مستقلة عند كل إرسال لزيادة ربحك
+            # يفتح إعلان عند كل ضغطة إرسال
             page.launch_url(AD_URL)
             try:
                 response = chat.send_message(user_input.value)
@@ -32,7 +35,6 @@ def main(page: ft.Page):
                 messages.controls.append(ft.Text(f"🤖 الذكاء: {response.text}", color="white"))
             except Exception as ex:
                 messages.controls.append(ft.Text(f"⚠️ خطأ في الاتصال", color="red"))
-            
             user_input.value = ""
             page.update()
 
@@ -54,7 +56,10 @@ def main(page: ft.Page):
         messages,
         ft.Row([user_input, ft.IconButton(ft.Icons.SEND_ROUNDED, on_click=send_message, icon_color="blue400")])
     )
+    
+    # تشغيل الإعلان الأول بعد تحميل الواجهة
+    page.run_task(initial_ad_launch)
 
-# التشغيل كنسخة ويب عالمية
+# التشغيل كمتصفح ويب
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
-                
+        
